@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Monitor Go - {{.Endpoint}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        #webhooks {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .webhook-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .webhook-item h3 {
+            margin: 0;
+            color: #444;
+        }
+        .webhook-item pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .webhook-id {
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webhook Monitor - Endpoint: {{.Endpoint}}</h1>
+    <div id="webhooks"></div>
+
+    <script>
+        const endpoint = "{{.Endpoint}}";
+        const evtSource = new EventSource("/events/" + endpoint);
+        const webhooksDiv = document.getElementById("webhooks");
+
+        function updateWebhookDisplay(webhook) {
+            const webhookElement = document.createElement("div");
+            webhookElement.className = "webhook-item";
+            webhookElement.innerHTML = `
+                <h3>ID: <span class="webhook-id">${webhook.id}</span></h3>
+                <p>Timestamp: ${new Date(webhook.timestamp).toLocaleString()}</p>
+                <h4>Headers:</h4>
+                <pre>${JSON.stringify(webhook.headers, null, 2)}</pre>
+                <h4>Body:</h4>
+                <pre>${webhook.body}</pre>
+            `;
+
+            webhooksDiv.insertBefore(webhookElement, webhooksDiv.firstChild);
+        }
+
+        evtSource.onmessage = function(event) {
+            const webhook = JSON.parse(event.data);
+            updateWebhookDisplay(webhook);
+        };
+    </script>
+</body>
+</html>
