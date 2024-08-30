@@ -1,3 +1,4 @@
 dist/
 Makefile
 webhookgo.service
+.DS_Store
