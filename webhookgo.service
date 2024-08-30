@@ -1,0 +1,14 @@
+[Unit]
+Description         = webhookgo
+
+[Service]
+Туре                = exec
+User                = root
+WorkingDirectory    = /var/www/html/webhookgo.finte.com.br
+ExecStart           = /var/www/html/webhookgo.finte.com.br/webhookgo
+
+Restart             = always
+RestartSec          = 5s
+
+[Install]
+WantedBy=multi-user.target
